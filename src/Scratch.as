@@ -92,13 +92,14 @@ public class Scratch extends Sprite {
 	public var isMicroworld:Boolean = false;
 
 	public var presentationScale:Number;
-	
+
 	// Runtime
 	public var runtime:ScratchRuntime;
 	public var interp:Interpreter;
 	public var extensionManager:ExtensionManager;
 	public var server:Server;
 	public var gh:GestureHandler;
+	public var vc:VideoCamera;
 	public var projectID:String = '';
 	public var projectOwner:String = '';
 	public var projectIsPrivate:Boolean;
@@ -187,6 +188,7 @@ public class Scratch extends Sprite {
 
 		stagePane = getScratchStage();
 		gh = new GestureHandler(this, (loaderInfo.parameters['inIE'] == 'true'));
+		vc = new VideoCamera();
 		initInterpreter();
 		initRuntime();
 		initExtensionManager();
@@ -208,6 +210,7 @@ public class Scratch extends Sprite {
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown); // to handle escape key
 		stage.addEventListener(Event.ENTER_FRAME, step);
 		stage.addEventListener(Event.RESIZE, onResize);
+    stage.addEventListener(Event.ENTER_FRAME, funcao);
 
 		setEditMode(startInEditMode());
 
@@ -221,6 +224,10 @@ public class Scratch extends Sprite {
 		//Analyze.countMissingAssets();
 
 		handleStartupParameters();
+	}
+
+	protected function funcao(e:Event):void {
+		vc.getVideo(scriptsPane);
 	}
 
 	protected function handleStartupParameters():void {
@@ -882,15 +889,15 @@ public class Scratch extends Sprite {
 
 		updateLayout(w, h);
 	}
-	
+
 	public function updateRecordingTools(t:Number):void {
 		stagePart.updateRecordingTools(t);
 	}
-	
+
 	public function removeRecordingTools():void {
 		stagePart.removeRecordingTools();
 	}
-	
+
 	public function refreshStagePart():void {
 		stagePart.refresh();
 	}
@@ -1050,7 +1057,7 @@ public class Scratch extends Sprite {
 
 		m.showOnStage(stage, b.x, topBarPart.bottom() - 1);
 	}
-	
+
 	public function stopVideo(b:*):void {
 		runtime.stopVideo();
 	}
